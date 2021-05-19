@@ -1,7 +1,7 @@
 package seclin.wordline.admin.controller;
 
-import seclin.wordline.admin.model.Facade;
 import seclin.wordline.admin.model.Utilisateur;
+import seclin.wordline.admin.model.UtilisateurRepository;
 import seclin.wordline.admin.models.AuthenticationRequest;
 import seclin.wordline.admin.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class Controller {
-    Facade facade = new Facade();
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -31,9 +31,21 @@ public class Controller {
     @Autowired
     private JwtUtil jwtTokenUtil;
 
+    @Autowired //don't forget the setter
+    private UtilisateurRepository repository;
+
     @GetMapping("/getUtilisateur")
     public ResponseEntity<List<Utilisateur>> getAllUtilisateur(){
-        return ResponseEntity.ok().body(facade.getUtilisateurList());
+        /*
+        List<String> roles = new ArrayList<>();
+        repository.save(new Utilisateur("Ozgur","Oz MDP", roles));
+        roles.add("ADMIN");
+        repository.save(new Utilisateur("Deniz","Deniz MDP", roles));
+        roles.add("RUN");
+        repository.save(new Utilisateur("SAG","SAG MDP", roles));
+         */
+        List<Utilisateur> utilisateurList = (ArrayList<Utilisateur>) repository.findAll();
+        return ResponseEntity.ok().body(utilisateurList);
     }
 
     @PostMapping("/authenticate")

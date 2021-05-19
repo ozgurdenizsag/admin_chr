@@ -1,21 +1,34 @@
 package seclin.wordline.admin.model;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
+@Table(name = "utilisateur")
 public class Utilisateur {
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
     private String login;
     private String password;
+    @ElementCollection
     private List<String> roles;
 
     public Utilisateur() {
     }
 
-    public Utilisateur(long id, String login, String password, List<String> roles) {
-        this.id = id;
+    public Utilisateur(String login, String password, List<String> roles) {
         this.login = login;
         this.password = password;
         this.roles = roles;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Utilisateur[id=%d, login='%s', password='%s', roles='%s']",
+                id, login, password, roles);
     }
 
     public long getId() {

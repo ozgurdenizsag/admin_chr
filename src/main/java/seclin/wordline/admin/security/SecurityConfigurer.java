@@ -18,6 +18,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
+
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final String ROLE_CHEF = "CHEF";
+
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception{
@@ -46,6 +50,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/authenticate").permitAll()
                 .antMatchers(HttpMethod.OPTIONS,"/getUtilisateur").permitAll()
+                .antMatchers(HttpMethod.GET,"/getUtilisateur").hasAnyAuthority(ROLE_ADMIN,ROLE_CHEF)
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
