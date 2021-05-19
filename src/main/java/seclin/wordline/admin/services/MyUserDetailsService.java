@@ -22,5 +22,6 @@ public class MyUserDetailsService implements UserDetailsService {
         System.out.println("userName est : " + userName);
         System.out.println("et on retourne foo foo");
         return new User("foo", "foo", roles);
+
     }
 }

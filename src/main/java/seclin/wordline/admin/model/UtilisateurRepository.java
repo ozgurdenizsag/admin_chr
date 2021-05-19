@@ -11,4 +11,5 @@ import java.util.List;
         List<Utilisateur> findByLogin(String login);
 
         Utilisateur findById(long id);
+
     }
