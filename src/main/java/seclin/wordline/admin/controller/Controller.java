@@ -50,19 +50,17 @@ public class Controller {
 
     @PostMapping("/authenticate")
     public ResponseEntity<String[]> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
-        System.out.println("authenticationRequest est : " + authenticationRequest.getUsername() + authenticationRequest.getPassword());
         try {
-            System.out.println("avant try");
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-            System.out.println("apres try");
+
         } catch (BadCredentialsException e){
             throw new Exception("nom pw pas bon");
         }
-        System.out.println("en dehors du try catch");
-        System.out.println("on load by username");
+
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        System.out.println("on genere le token");
+
         final String jwt = jwtTokenUtil.generateToken(userDetails);
 
         //return ResponseEntity.ok(new AuthenticationResponse(jwt));

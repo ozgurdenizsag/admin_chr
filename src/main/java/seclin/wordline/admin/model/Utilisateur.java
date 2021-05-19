@@ -12,7 +12,7 @@ public class Utilisateur {
     private long id;
     private String login;
     private String password;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
     public Utilisateur() {
@@ -23,7 +23,6 @@ public class Utilisateur {
         this.password = password;
         this.roles = roles;
     }
-
 
     @Override
     public String toString() {
