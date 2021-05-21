@@ -1,5 +1,6 @@
 package seclin.wordline.admin.controller;
 
+import org.springframework.http.HttpStatus;
 import seclin.wordline.admin.model.Utilisateur;
 import seclin.wordline.admin.model.UtilisateurRepository;
 import seclin.wordline.admin.models.AuthenticationRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,40 +33,60 @@ public class Controller {
     @Autowired
     private JwtUtil jwtTokenUtil;
 
-    @Autowired //don't forget the setter
+    @Autowired
     private UtilisateurRepository repository;
+
+
 
     @GetMapping("/getUtilisateur")
     public ResponseEntity<List<Utilisateur>> getAllUtilisateur(){
-        /*
-        List<String> roles = new ArrayList<>();
-        repository.save(new Utilisateur("Ozgur","Oz MDP", roles));
-        roles.add("ADMIN");
-        repository.save(new Utilisateur("Deniz","Deniz MDP", roles));
-        roles.add("RUN");
-        repository.save(new Utilisateur("SAG","SAG MDP", roles));
-         */
+        System.out.println("methode getAllUtilisateur");
         List<Utilisateur> utilisateurList = (ArrayList<Utilisateur>) repository.findAll();
         return ResponseEntity.ok().body(utilisateurList);
     }
 
+    @PostMapping("/populateTable")
+    public ResponseEntity<String> populateTable(){
+        System.out.println("methode populateTable est suspendu..");
+/*
+        //Utilisateur Admin avec ADMIN et RUN
+        List<String> roles1 = new ArrayList<>();
+        roles1.add("ADMIN");
+        roles1.add("RUN");
+        repository.save(new Utilisateur("Admin","Admin", roles1));
+
+        //Utilisateur Chef avec CHEF
+        List<String> roles2 = new ArrayList<>();
+        roles2.add("CHEF");
+        repository.save(new Utilisateur("Chef","Chef", roles2));
+ */
+
+        return ResponseEntity.ok().body("Le peuplement des tables est suspendu..");
+    }
+
+
     @PostMapping("/authenticate")
     public ResponseEntity<String[]> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
+        //Idéntification des identifiants
+        System.out.println("methode createAuthenticationToken");
+        String login = authenticationRequest.getUsername();
+        String password = authenticationRequest.getPassword();
         try {
-
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-
+            System.out.println("dans try");
+            Utilisateur utilisateur = repository.findByLoginAndPassword(login,password);
+            System.out.println("apres le get depuis le repo");
+            if ( utilisateur != null) {
+                System.out.println("dans if");
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login,password));
+                final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+                final String jwt = jwtTokenUtil.generateToken(userDetails);
+                return ResponseEntity.ok(new String[]{jwt});
+            }
+            return ResponseEntity.ok(new String[]{""});
+            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (BadCredentialsException e){
-            throw new Exception("nom pw pas bon");
+            throw new Exception("Login ou mot de passe errone");
         }
-
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-
-        //return ResponseEntity.ok(new AuthenticationResponse(jwt));
-        return ResponseEntity.ok(new String[]{jwt});
     }
 
 }

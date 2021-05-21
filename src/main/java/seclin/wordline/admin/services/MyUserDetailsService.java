@@ -17,25 +17,20 @@ import java.util.List;
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-    @Autowired //don't forget the setter
+    @Autowired
     private UtilisateurRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-        List<Utilisateur> utilisateurs = repository.findByLogin(userName);
-        Utilisateur utilisateurConnecte = utilisateurs.get(0);
+        Utilisateur utilisateur = repository.findByLogin(userName);
 
         List<GrantedAuthority> roles = new ArrayList<>();
 
-
-        for (String myRole : utilisateurConnecte.getRoles()) {
+        for (String myRole : utilisateur.getRoles()) {
             roles.add(new SimpleGrantedAuthority(myRole));
         }
 
-
-
-        return new User(utilisateurConnecte.getLogin(), utilisateurConnecte.getPassword(), roles);
-
+        return new User(utilisateur.getLogin(), utilisateur.getPassword(), roles);
     }
 }

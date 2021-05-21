@@ -2,6 +2,8 @@ package seclin.wordline.admin.security;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import seclin.wordline.admin.exception.CustomAuthenticationFailureHandler;
 import seclin.wordline.admin.filters.JwtRequestFilter;
 import seclin.wordline.admin.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     private static final String ROLE_ADMIN = "ADMIN";
     private static final String ROLE_CHEF = "CHEF";
+    private static final String ROLE_MANAGER = "MANAGER";
+    private static final String ROLE_RUN = "RUN";
 
     @Override
     @Bean
@@ -55,10 +59,12 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/authenticate").permitAll()
                 .antMatchers(HttpMethod.OPTIONS,"/getUtilisateur").permitAll()
-                .antMatchers(HttpMethod.GET,"/getUtilisateur").hasAnyAuthority(ROLE_ADMIN,ROLE_CHEF)
+                .antMatchers("/populateTable").permitAll()
+                .antMatchers(HttpMethod.GET,"/getUtilisateur").hasAnyAuthority(ROLE_ADMIN,ROLE_MANAGER)
                 .anyRequest().authenticated()
                 .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionAuthenticationFailureHandler(authenticationFailureHandler());
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
@@ -66,6 +72,11 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Bean
     public SecretKey getSecretKey(){
         return Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
     }
 
 }

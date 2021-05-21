@@ -8,8 +8,10 @@ import java.util.List;
     @Repository
     public interface UtilisateurRepository extends CrudRepository<Utilisateur, Long> {
 
-        List<Utilisateur> findByLogin(String login);
+        Utilisateur findByLogin(String login);
 
         Utilisateur findById(long id);
+
+        Utilisateur findByLoginAndPassword(String login, String password);
 
     }
