@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import seclin.wordline.admin.model.Utilisateur;
-import seclin.wordline.admin.model.UtilisateurRepository;
+import seclin.wordline.admin.model.entities.Utilisateur;
+import seclin.wordline.admin.model.repository.UtilisateurRepository;
 
 import java.util.ArrayList;
 import java.util.List;

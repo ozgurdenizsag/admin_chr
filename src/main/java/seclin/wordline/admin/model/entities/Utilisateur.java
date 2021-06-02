@@ -1,4 +1,4 @@
-package seclin.wordline.admin.model;
+package seclin.wordline.admin.model.entities;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,15 +12,17 @@ public class Utilisateur {
     private long id;
     private String login;
     private String password;
+    private String email;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
     public Utilisateur() {
     }
 
-    public Utilisateur(String login, String password, List<String> roles) {
+    public Utilisateur(String login, String password, String email, List<String> roles) {
         this.login = login;
         this.password = password;
+        this.email = email;
         this.roles = roles;
     }
 
@@ -29,6 +31,14 @@ public class Utilisateur {
         return String.format(
                 "Utilisateur[id=%d, login='%s', password='%s', roles='%s']",
                 id, login, password, roles);
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public long getId() {
